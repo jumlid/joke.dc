@@ -1,7 +1,5 @@
 let prefix = './'
-let l;
 let fetch = require('node-fetch')
-let q
 let url = 'https://v2.jokeapi.dev/joke/Any'
 let token= require('./user.json')
 
