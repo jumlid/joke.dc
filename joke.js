@@ -21,8 +21,7 @@ client.on('messageCreate', (message) => {
             console.log(message.content)
         }
         if (message.content.startsWith(prefix + 'play')) {
-            joke()
-            function joke() {
+          
 
 
                 fetch(url)
@@ -36,7 +35,7 @@ client.on('messageCreate', (message) => {
 
                     }
                     )
-            }
+            
         }
     }
     else {
