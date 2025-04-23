@@ -1,3 +1,4 @@
+# joke.dc
 Here i'm trying to make a Discord bot via using Discord.js and Nodejs.
 About the bot ( i know it's not done yet)
 my main focus is to fix my past erros like:
