@@ -1,0 +1,47 @@
+{
+    "1244953598064988223": {
+        "name": ".'s server",
+        "id": "1244953598064988223",
+        "category": {
+            "Programming": true,
+            "Misc": false,
+            "Dark": true,
+            "Pun": false,
+            "spooky": false,
+            "christmas": false
+        },
+        "url_a": [
+            "Programming",
+            "Dark"
+        ],
+        "url": "Programming,Dark"
+    },
+    "1310612108622303324": {
+        "name": "Minecraft",
+        "id": "1310612108622303324",
+        "category": {
+            "Programming": false,
+            "Misc": false,
+            "Dark": false,
+            "Pun": false,
+            "spooky": false,
+            "christmas": false
+        },
+        "url_a": [],
+        "url": ""
+    },
+    "1347953946701992017": {
+        "name": "boi's server",
+        "id": "1347953946701992017",
+        "category": {
+            "Programming": false,
+            "Misc": false,
+            "Dark": false,
+            "Pun": false,
+            "spooky": false,
+            "christmas": false
+        },
+        "url_a": [],
+        "url": ""
+    }
+}
