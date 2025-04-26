@@ -1,5 +1,6 @@
 const e = require('cors')
 const { Client, GatewayIntentBits, Guild } = require('discord.js')
+const { json } = require('express')
 const fs = require('fs')
 const { parse } = require('path')
 const c = new Client({ intents: [GatewayIntentBits.MessageContent, GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] })
@@ -43,7 +44,9 @@ c.on('guildCreate', (guild) => {
         "name": guild.name,
         "id": guild.id,
         "category": { ...steve.category },
-        "auto": false
+        "auto": false,
+        "url_a": [],
+        "url": ""
 
     }
 
@@ -65,7 +68,7 @@ c.on('messageCreate', (m) => {
 
 
     if (!m.author.bot) {
-        if (m.author == '1356645964332667013') {
+        if (m.author == '1356645964332667013') { // This line of code is just for fun it has no real use 
             m.channel.send('https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExb21jbHpsZ2Z2Nm1ya3psbHRlc3pxaHZuczB2enY3ZHd2aWdyYjhmZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oIfPHqFuT6Cn4ksUyR/giphy.gif')
         }
         else {
@@ -87,7 +90,10 @@ c.on('messageCreate', (m) => {
                             "name": m.guild.name,
                             "id": m.guild.id,
                             "category": { ...steve.category },// Here i used spread oprator since js stored non premitive data as refrence 
-                            "auto": false
+                            "auto": false,
+                            "url_a": [],
+                            "url": ""
+
 
                         }
 
@@ -120,11 +126,13 @@ c.on('messageCreate', (m) => {
                     switch (m.content.split(' ')[1]) {
                         case "add":
                             if (m.content.split(' ')[2] in steve.category) {
-                                if (JSON.parse(m.content.split(' ')[3]) === true || JSON.parse(m.content.split(' ')[3]) === false) {
+                                //   steve_memory[m.guild.id].url_a = []
 
+
+                                if (JSON.parse(m.content.split(' ')[3]) === true || JSON.parse(m.content.split(' ')[3]) === false) {
+                                    m.channel.send(`Chaning steve setting category ${m.content.split(' ')[2]} to ${m.content.split(' ')[3]}  `)
                                     steve_memory[m.guild.id].category[m.content.split(' ')[2]] = JSON.parse(m.content.split(' ')[3])
                                     console.log('fir', steve_memory)
-                                    m.channel.send(`Chaning steve setting category ${m.content.split(' ')[2]} to ${m.content.split(' ')[3]}  `)
 
 
                                 }
@@ -147,21 +155,30 @@ c.on('messageCreate', (m) => {
 
 
                             save(m.guild.id)
+
                             break;
                         case "help":
                             m.channel.send('1) sudo status: to view all the available category \n 2) sudo add <category> <true/false> to change the  joke according to your liking \n 3) sudo start to save all the previous cammand and to start the bot ')
                             break;
                         case "joke":
-                            joke(steve_memory[m.guild.id].url)
+                            if (steve_memory[m.guild.id].url.split(',').length < 3) {
+                                joke("any")
+                            }
+                            else {
+
+
+                                joke(steve_memory[m.guild.id].url)
+                            }
                             break;
                         case "start":
-                            start()
+                            steve_memory[m.guild.id].auto = true
                             break;
 
                         default:
 
                             break;
                     }
+
 
                 }
                 else {
@@ -177,38 +194,42 @@ c.on('messageCreate', (m) => {
     }
 
     function save(id) {
-        older_message = fs.readFileSync('./data.json', 'utf8')
-        older_message = JSON.parse(older_message)
-        older_message[id] = steve_memory[id]
-        //     older_message[m.guild].auto = false
-        older_message[m.guild.id].url_a = []
-        Object.entries(older_message[id].category).forEach(e => {
+        console.log(steve_memory[m.guild.id].url.split(',').length)
+        //
+        Object.entries(steve_memory[m.guild.id].category).forEach(e => {
             // console.log(e[1])
             if (e[1]) {
-
-                older_message[m.guild.id].url_a.push(e[0])
+                steve_memory[m.guild.id].url_a.push(e[0])
                 console.log(e[0])
             }
+
+            steve_memory[m.guild.id].url = steve_memory[m.guild.id].url_a.join(',')
+
+
+
 
 
 
         })
-        if (older_message[id].url_a.length === 0) {
-            older_message[m.guild.id].url_a.push('any')
+        if (steve_memory[m.guild.id].url.split(',').length < 3 && steve_memory[m.guild.id].url.split(',').length != 1) {
+            m.channel.send("`Please select atleast 4 or more category else you may see API error & your data have't saved yet `")
 
         }
-        older_message[m.guild.id].url = older_message[m.guild.id].url_a.join(',')
-        if (older_message[m.guild.id].url.split(',').length === 1 || older_message[m.guild.id].url.split(',').length >= 4) {
-            m.channel.send('setting saved ')
+        else {
+
+            console.log('steve', steve_memory[m.guild.id])
+            older_message = fs.readFileSync('./data.json', 'utf8')
+            older_message = JSON.parse(older_message)
+            older_message[id] = steve_memory[id]
+            console.log(older_message)
             older_message = JSON.stringify(older_message)
             fs.writeFileSync('./data.json', older_message)
+            //     older_message[m.guild].auto = false
         }
 
 
-        else {
-            m.channel.send('please select atleast 4 category else you may face API error ')
 
-        }
+
 
 
         //   joke(older_message[m.guild.id].url)
@@ -218,13 +239,17 @@ c.on('messageCreate', (m) => {
     }
     function joke(url) {
 
-
-        console.log(url.split(',').length)
+        console.log(`https://v2.jokeapi.dev/joke/${url}`)
         fetch(`https://v2.jokeapi.dev/joke/${url}`)
-            .then(res => res.json())
+            .then(res =>
+
+                res.json()
+
+            )
             .then(data => {
+
                 m.channel.send(data.setup.trim())
-                if (data.delivery.trim() != "") {
+                if (data.delivery != undefined) {
                     m.channel.send(data.delivery.trim())
                 }
 
@@ -232,29 +257,44 @@ c.on('messageCreate', (m) => {
 
             })
 
-            .catch(() => {
+            .catch((e) => {
+                if (steve_memory[m.guild.id].url.split(',').length < 3) {
+                    joke("any")
+                }
+                else {
 
-                m.channel.send('API error')
+
+                    joke(steve_memory[m.guild.id].url)
+                }
+            console.log('ops')
             })
 
     }
-    function start() {
-        //  save()
+
+    if (steve_memory[m.guild.id].auto) {
         setInterval(() => {
-            joke(steve_memory[m.guild.id].url)  // why don't i create a timer according to users  ? i'm lazy af don't wana think so hard BRAIN 404 just chill with every hour hehe 
+
+            if (steve_memory[m.guild.id].url.split(',').length < 3) {
+                joke("any")
+            }
+            else {
+
+
+                joke(steve_memory[m.guild.id].url)
+            }
         }, 20000)
-        /*
-        let om = fs.readFileSync('./data.json', 'utf8')
-        om = JSON.parse(om)
-        if (om[m.guild.id].auto) {
-            console.log('yes ')
 
-        }
 
-*/
+
+
+
+
+
+
+
     }
 
-  
+    // why don't i create a timer according to users  ? i'm lazy af don't wana think so hard BRAIN 404 just chill with every hour hehe 
 
 })
-c.login()
+c.login(token)
