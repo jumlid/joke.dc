@@ -283,15 +283,6 @@ c.on('messageCreate', (m) => {
                 joke(steve_memory[m.guild.id].url)
             }
         }, 20000)
-
-
-
-
-
-
-
-
-
     }
 
     // why don't i create a timer according to users  ? i'm lazy af don't wana think so hard BRAIN 404 just chill with every hour hehe 
